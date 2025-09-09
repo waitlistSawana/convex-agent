@@ -13,10 +13,13 @@ importers:
         version: 1.0.15(zod@4.1.5)
       '@convex-dev/agent':
         specifier: ^0.2.7
-        version: 0.2.7(@ai-sdk/provider-utils@3.0.8(zod@4.1.5))(ai@5.0.34(zod@4.1.5))(convex-helpers@0.1.104(@standard-schema/spec@1.0.0)(convex@1.26.2(react@19.1.1))(react@19.1.1)(typescript@5.9.2)(zod@4.1.5))(convex@1.26.2(react@19.1.1))(react@19.1.1)
+        version: 0.2.7(@ai-sdk/provider-utils@3.0.8(zod@4.1.5))(ai@5.0.39(zod@4.1.5))(convex-helpers@0.1.104(@standard-schema/spec@1.0.0)(convex@1.26.2(react@19.1.1))(react@19.1.1)(typescript@5.9.2)(zod@4.1.5))(convex@1.26.2(react@19.1.1))(react@19.1.1)
       '@radix-ui/react-slot':
         specifier: ^1.2.3
         version: 1.2.3(@types/react@19.1.12)(react@19.1.1)
+      ai:
+        specifier: ^5.0.39
+        version: 5.0.39(zod@4.1.5)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -99,8 +102,8 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4
 
-  '@ai-sdk/gateway@1.0.19':
-    resolution: {integrity: sha512-TYLxx8Sclr/RdB0RIwGmA8OtJtyJxoPGtrTYgwrbzM2GdtwYtUuA/UIc4tZyCeyR1ujfqjbqiIF3kB54zGRD3A==}
+  '@ai-sdk/gateway@1.0.20':
+    resolution: {integrity: sha512-2K0kGnHyLfT1v2+3xXbLqohfWBJ/vmIh1FTWnrvZfvuUuBdOi2DMgnSQzkLvFVLyM8mhOcx+ZwU6IOOsuyOv/w==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4
@@ -888,8 +891,8 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
-  ai@5.0.34:
-    resolution: {integrity: sha512-ouReddlmQ8ihFwY+g8fJP7u64l7uCPnJSK9R6kTiyTJ3VvztcH1HrYXqG8+XEzBVLJKJmUoYxY1gkFdwMdF8wQ==}
+  ai@5.0.39:
+    resolution: {integrity: sha512-1AOjTHY8MUY4T/X/I+otGTbvKmMQCCGWffuVDyQ21l/2Vv/QoLZcw+ZZHVvp+wvQcPOsfXjURGSFZtin7rnghA==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4
@@ -2311,7 +2314,7 @@ snapshots:
       '@ai-sdk/provider-utils': 3.0.8(zod@4.1.5)
       zod: 4.1.5
 
-  '@ai-sdk/gateway@1.0.19(zod@4.1.5)':
+  '@ai-sdk/gateway@1.0.20(zod@4.1.5)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
       '@ai-sdk/provider-utils': 3.0.8(zod@4.1.5)
@@ -2336,10 +2339,10 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
-  '@convex-dev/agent@0.2.7(@ai-sdk/provider-utils@3.0.8(zod@4.1.5))(ai@5.0.34(zod@4.1.5))(convex-helpers@0.1.104(@standard-schema/spec@1.0.0)(convex@1.26.2(react@19.1.1))(react@19.1.1)(typescript@5.9.2)(zod@4.1.5))(convex@1.26.2(react@19.1.1))(react@19.1.1)':
+  '@convex-dev/agent@0.2.7(@ai-sdk/provider-utils@3.0.8(zod@4.1.5))(ai@5.0.39(zod@4.1.5))(convex-helpers@0.1.104(@standard-schema/spec@1.0.0)(convex@1.26.2(react@19.1.1))(react@19.1.1)(typescript@5.9.2)(zod@4.1.5))(convex@1.26.2(react@19.1.1))(react@19.1.1)':
     dependencies:
       '@ai-sdk/provider-utils': 3.0.8(zod@4.1.5)
-      ai: 5.0.34(zod@4.1.5)
+      ai: 5.0.39(zod@4.1.5)
       convex: 1.26.2(react@19.1.1)
       convex-helpers: 0.1.104(@standard-schema/spec@1.0.0)(convex@1.26.2(react@19.1.1))(react@19.1.1)(typescript@5.9.2)(zod@4.1.5)
     optionalDependencies:
@@ -2920,9 +2923,9 @@ snapshots:
 
   acorn@8.15.0: {}
 
-  ai@5.0.34(zod@4.1.5):
+  ai@5.0.39(zod@4.1.5):
     dependencies:
-      '@ai-sdk/gateway': 1.0.19(zod@4.1.5)
+      '@ai-sdk/gateway': 1.0.20(zod@4.1.5)
       '@ai-sdk/provider': 2.0.0
       '@ai-sdk/provider-utils': 3.0.8(zod@4.1.5)
       '@opentelemetry/api': 1.9.0

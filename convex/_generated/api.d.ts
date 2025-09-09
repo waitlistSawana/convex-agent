@@ -11,7 +11,10 @@
 import type * as agent from "../agent.js";
 import type * as agents_config from "../agents/config.js";
 import type * as agents_simple from "../agents/simple.js";
+import type * as agents_story from "../agents/story.js";
 import type * as chat_basic from "../chat/basic.js";
+import type * as chat_streamAbort from "../chat/streamAbort.js";
+import type * as chat_streaming from "../chat/streaming.js";
 import type * as myFunctions from "../myFunctions.js";
 import type * as threads from "../threads.js";
 import type * as utils from "../utils.js";
@@ -34,7 +37,10 @@ declare const fullApi: ApiFromModules<{
   agent: typeof agent;
   "agents/config": typeof agents_config;
   "agents/simple": typeof agents_simple;
+  "agents/story": typeof agents_story;
   "chat/basic": typeof chat_basic;
+  "chat/streamAbort": typeof chat_streamAbort;
+  "chat/streaming": typeof chat_streaming;
   myFunctions: typeof myFunctions;
   threads: typeof threads;
   utils: typeof utils;

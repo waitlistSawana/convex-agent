@@ -1,10 +1,14 @@
+"use client";
+
+
 import { useMutation } from "convex/react";
-import { Toaster } from "../components/ui/toaster";
+import { Toaster } from "sonner";
 import { api } from "../../convex/_generated/api";
 import {
   optimisticallySendMessage,
   useSmoothText,
-  useUIMessages,
+  useThreadMessages,
+  toUIMessages,
   type UIMessage,
 } from "@convex-dev/agent/react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -67,7 +71,7 @@ export default function ChatStreaming() {
 }
 
 function Story({ threadId, reset }: { threadId: string; reset: () => void }) {
-  const { results: messages } = useUIMessages(
+  const { results: messages } = useThreadMessages(
     api.chat.streaming.listThreadMessages,
     { threadId },
     { initialNumItems: 10, stream: true },
@@ -120,7 +124,7 @@ function Story({ threadId, reset }: { threadId: string; reset: () => void }) {
         <div className="flex-1 overflow-y-auto p-6">
           {messages.length > 0 ? (
             <div className="flex flex-col gap-4 whitespace-pre">
-              {messages.map((m) => (
+              {toUIMessages(messages).map((m) => (
                 <Message key={m.key} message={m} />
               ))}
               <div ref={messagesEndRef} />
@@ -152,12 +156,13 @@ function Story({ threadId, reset }: { threadId: string; reset: () => void }) {
                   : "Tell me a story..."
               }
             />
-            {messages.find((m) => m.status === "streaming") ? (
+            {toUIMessages(messages).find((m) => m.status === "streaming") ? (
               <button
                 className="px-4 py-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 transition font-medium self-end"
                 onClick={() => {
                   const order =
-                    messages.find((m) => m.status === "streaming")?.order ?? 0;
+                    toUIMessages(messages).find((m) => m.status === "streaming")
+                      ?.order ?? 0;
                   void abortStreamByOrder({ threadId, order });
                 }}
                 type="button"

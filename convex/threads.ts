@@ -88,15 +88,18 @@ export const updateThreadTitle = action({
   },
 });
 
+// check thread id (or user id)
 export async function authorizeThreadAccess(
   ctx: QueryCtx | MutationCtx | ActionCtx,
   threadId: string,
   requireUser?: boolean,
 ) {
+  // get user id
   const userId = await getAuthUserId(ctx);
   if (requireUser && !userId) {
     throw new Error("Unauthorized: user is required");
   }
+  // get user id from thread metadata
   const { userId: threadUserId } = await getThreadMetadata(
     ctx,
     components.agent,

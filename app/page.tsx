@@ -37,9 +37,14 @@ function Content() {
   return (
     <div className="flex flex-col gap-8 max-w-lg mx-auto">
       <p>Welcome {viewer ?? "Anonymous"}!</p>
-      <Link href={"/chat-demo"}>
-        <Button>Chat Basic Demo Page</Button>
-      </Link>
+      <div className="flex gap-4">
+        <Link href={"/chat-demo"}>
+          <Button>Chat Basic Demo Page</Button>
+        </Link>
+        <Link href={"/chat-stream-demo"}>
+          <Button>Chat Steaming Demo Page</Button>
+        </Link>
+      </div>
       <p>
         Click the button below and open this page in another window - this data
         is persisted in the Convex cloud database!

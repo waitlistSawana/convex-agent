@@ -54,3 +54,13 @@ https://github.com/get-convex/agent/blob/main/example
 ### Add environment variable to Convex Dashboard of Project
 
 for ai providers api key.
+
+## TODO
+
+为了实现 chat agent
+
+- [ ] 具有提示词和确认按钮调用的 agent
+
+  - [ ] 配置系统提示词的 chat agent
+
+  - [ ] 有按钮工具调用 标记 完成阶段并且保存
