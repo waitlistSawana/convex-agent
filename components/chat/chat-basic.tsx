@@ -54,10 +54,14 @@ export default function ChatBasic() {
     });
   }, [createThread]);
 
-  // On mount or when threadId changes, if no threadId, create one and set hash
+  // When threads are loaded and no threadId in URL, select the latest thread
   useEffect(() => {
-    if (!threadId) newThread();
-  }, [newThread, threadId]);
+    if (!threadId && threads.results && threads.results.length > 0) {
+      const latestThread = threads.results[0];
+      window.location.hash = latestThread._id;
+      setThreadId(latestThread._id);
+    }
+  }, [threadId, threads.results]);
 
   return (
     <div className="h-full flex flex-col">
@@ -79,10 +83,20 @@ export default function ChatBasic() {
       <div className="h-full flex flex-row bg-gray-50 flex-1 min-h-0">
         {/* Sidebar */}
         <aside className="w-64 bg-white border-r flex flex-col h-full min-h-0">
-          <div className="p-4 border-b font-semibold text-lg">Threads</div>
+          <div className="p-4 border-b">
+            <div className="font-semibold text-lg mb-3">Threads</div>
+            <button
+              onClick={newThread}
+              className="w-full flex justify-center items-center gap-2 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              type="button"
+            >
+              <span className="text-lg">+</span>
+              <span>New Thread</span>
+            </button>
+          </div>
           <div className="flex-1 overflow-y-auto min-h-0">
             {threads.results.length === 0 && (
-              <div className="p-4 text-gray-400 text-sm">No threads yet.</div>
+              <div className="p-4 text-gray-400 text-sm">No threads yet. Create your first thread above.</div>
             )}
             <ul>
               {threads.results.map((thread) => (
@@ -106,23 +120,28 @@ export default function ChatBasic() {
               ))}
             </ul>
           </div>
-          <div className="px-4 py-2">
-            <button
-              onClick={newThread}
-              className="w-full flex justify-center items-center gap-2 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-              type="button"
-            >
-              <span className="text-lg">+</span>
-              <span>New Thread</span>
-            </button>
-          </div>
         </aside>
         {/* Main chat area */}
         <main className="flex-1 flex flex-col items-center justify-center p-8 h-full min-h-0">
           {threadId ? (
             <Chat threadId={threadId} />
           ) : (
-            <div className="text-center text-gray-500">Loading...</div>
+            <div className="text-center">
+              <div className="max-w-md mx-auto">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                  Welcome to Chat Demo
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  {threads.results?.length > 0 
+                    ? "Select a thread from the sidebar to continue chatting, or create a new thread to start fresh."
+                    : "Get started by creating your first thread using the button in the sidebar."
+                  }
+                </p>
+                <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-500">
+                  💡 Tip: Your chat history is automatically saved and you can switch between different conversations anytime.
+                </div>
+              </div>
+            </div>
           )}
         </main>
         <Toaster />

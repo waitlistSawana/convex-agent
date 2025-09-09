@@ -1,8 +1,9 @@
 "use client";
 
 
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { Toaster } from "sonner";
+import { usePaginatedQuery } from "convex-helpers/react";
 import { api } from "../../convex/_generated/api";
 import {
   optimisticallySendMessage,
@@ -24,6 +25,20 @@ export default function ChatStreaming() {
     typeof window !== "undefined" ? getThreadIdFromHash() : undefined,
   );
 
+  // Fetch thread title if threadId exists
+  const threadDetails = useQuery(
+    api.threads.getThreadDetails,
+    threadId ? { threadId } : "skip",
+  );
+
+  // Fetch all threads (internal API)
+  // For demo, hardcode userId as in backend
+  const threads = usePaginatedQuery(
+    api.threads.listThreads,
+    {},
+    { initialNumItems: 20 },
+  );
+
   // Listen for hash changes
   useEffect(() => {
     function onHashChange() {
@@ -32,6 +47,14 @@ export default function ChatStreaming() {
     window.addEventListener("hashchange", onHashChange);
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
+
+  // Reset handler: create a new thread and update hash
+  const newThread = useCallback(() => {
+    void createThread({ title: "Fresh thread" }).then((newId) => {
+      window.location.hash = newId;
+      setThreadId(newId);
+    });
+  }, [createThread]);
 
   const resetThread = useCallback(() => {
     void createThread({
@@ -42,31 +65,99 @@ export default function ChatStreaming() {
     });
   }, [createThread]);
 
-  // On mount or when threadId changes, if no threadId, create one and set hash
+  // When threads are loaded and no threadId in URL, select the latest thread
   useEffect(() => {
-    if (!threadId) {
-      void resetThread();
+    if (!threadId && threads.results && threads.results.length > 0) {
+      const latestThread = threads.results[0];
+      window.location.hash = latestThread._id;
+      setThreadId(latestThread._id);
     }
-  }, [resetThread, threadId]);
+  }, [threadId, threads.results]);
 
   return (
-    <>
-      <header className="sticky top-0 h-16 z-10 bg-white/80 backdrop-blur-sm p-4 flex justify-between items-center border-b">
-        <h1 className="text-xl font-semibold accent-text">
-          Streaming Chat Example
-        </h1>
+    <div className="h-full flex flex-col">
+      <header className="bg-white/80 backdrop-blur-sm p-4 flex justify-between items-center border-b">
+        <div className="flex items-center gap-4">
+          <h1 className="text-xl font-semibold accent-text">
+            Streaming Chat Example
+          </h1>
+          {threadId && threadDetails && threadDetails.title && (
+            <span
+              className="text-gray-500 text-base font-normal truncate max-w-xs"
+              title={threadDetails.title}
+            >
+              &mdash; {threadDetails.title}
+            </span>
+          )}
+        </div>
       </header>
-      <div className="h-[calc(100vh-8rem)] flex flex-col bg-gray-50">
-        {threadId ? (
-          <Story threadId={threadId} reset={resetThread} />
-        ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-500">
-            Loading...
+      <div className="h-full flex flex-row bg-gray-50 flex-1 min-h-0">
+        {/* Sidebar */}
+        <aside className="w-64 bg-white border-r flex flex-col h-full min-h-0">
+          <div className="p-4 border-b">
+            <div className="font-semibold text-lg mb-3">Threads</div>
+            <button
+              onClick={newThread}
+              className="w-full flex justify-center items-center gap-2 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              type="button"
+            >
+              <span className="text-lg">+</span>
+              <span>New Thread</span>
+            </button>
           </div>
-        )}
+          <div className="flex-1 overflow-y-auto min-h-0">
+            {threads.results.length === 0 && (
+              <div className="p-4 text-gray-400 text-sm">No threads yet. Create your first thread above.</div>
+            )}
+            <ul>
+              {threads.results.map((thread) => (
+                <li key={thread._id}>
+                  <button
+                    className={cn(
+                      "w-full text-left px-4 py-2 hover:bg-blue-50 transition flex items-center gap-2",
+                      threadId === thread._id &&
+                        "bg-blue-100 text-blue-900 font-semibold",
+                    )}
+                    onClick={() => {
+                      window.location.hash = thread._id;
+                      setThreadId(thread._id);
+                    }}
+                  >
+                    <span className="truncate max-w-[10rem]">
+                      {thread.title || "Untitled thread"}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+        {/* Main chat area */}
+        <main className="flex-1 flex flex-col items-center justify-center p-8 h-full min-h-0">
+          {threadId ? (
+            <Story threadId={threadId} reset={resetThread} />
+          ) : (
+            <div className="text-center">
+              <div className="max-w-md mx-auto">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                  Welcome to Streaming Chat Demo
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  {threads.results?.length > 0 
+                    ? "Select a thread from the sidebar to continue chatting, or create a new thread to start fresh."
+                    : "Get started by creating your first thread using the button in the sidebar."
+                  }
+                </p>
+                <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-500">
+                  ✨ This demo features real-time streaming responses for a more interactive experience.
+                </div>
+              </div>
+            </div>
+          )}
+        </main>
         <Toaster />
       </div>
-    </>
+    </div>
   );
 }
 
@@ -119,7 +210,7 @@ function Story({ threadId, reset }: { threadId: string; reset: () => void }) {
 
   return (
     <>
-      <div className="h-full flex flex-col max-w-4xl mx-auto w-full">
+      <div className="h-full flex flex-col w-full max-w-2xl">
         {/* Messages area - scrollable */}
         <div className="flex-1 overflow-y-auto p-6">
           {messages.length > 0 ? (
@@ -139,7 +230,7 @@ function Story({ threadId, reset }: { threadId: string; reset: () => void }) {
         {/* Fixed input area at bottom */}
         <div className="border-t bg-white p-6">
           <form
-            className="flex gap-2 items-center max-w-2xl mx-auto"
+            className="flex gap-2 items-center"
             onSubmit={(e) => {
               e.preventDefault();
               onSendClicked();
