@@ -37,13 +37,26 @@ function Content() {
   return (
     <div className="flex flex-col gap-8 max-w-lg mx-auto">
       <p>Welcome {viewer ?? "Anonymous"}!</p>
-      <div className="flex gap-4">
-        <Link href={"/chat-demo"}>
-          <Button>Chat Basic Demo Page</Button>
-        </Link>
-        <Link href={"/chat-stream-demo"}>
-          <Button>Chat Steaming Demo Page</Button>
-        </Link>
+      <div className="flex flex-col gap-4">
+        <div className="flex gap-4">
+          <Link href={"/chat-demo"}>
+            <Button className="bg-gray-600 hover:bg-gray-700">💬 Basic Chat Demo</Button>
+          </Link>
+          <Link href={"/chat-stream-demo"}>
+            <Button className="bg-green-600 hover:bg-green-700">⚡ Streaming Chat Demo</Button>
+          </Link>
+          <Link href={"/chat-ask-human-demo"}>
+            <Button className="bg-yellow-600 hover:bg-yellow-700">🤔 Human-in-Loop Demo</Button>
+          </Link>
+        </div>
+        <div className="flex gap-4">
+          <Link href={"/chat-weather-demo"}>
+            <Button className="bg-blue-600 hover:bg-blue-700">🌤️ Weather Agent Demo</Button>
+          </Link>
+          <Link href={"/chat-thread-management-demo"}>
+            <Button className="bg-purple-600 hover:bg-purple-700">📝 Thread Management Demo</Button>
+          </Link>
+        </div>
       </div>
       <p>
         Click the button below and open this page in another window - this data

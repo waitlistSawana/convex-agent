@@ -10,13 +10,23 @@
 
 import type * as agent from "../agent.js";
 import type * as agents_config from "../agents/config.js";
+import type * as agents_humanLoop from "../agents/humanLoop.js";
 import type * as agents_simple from "../agents/simple.js";
 import type * as agents_story from "../agents/story.js";
+import type * as agents_threadManager from "../agents/threadManager.js";
+import type * as agents_weather from "../agents/weather.js";
 import type * as chat_basic from "../chat/basic.js";
+import type * as chat_human from "../chat/human.js";
+import type * as chat_humanLoop from "../chat/humanLoop.js";
 import type * as chat_streamAbort from "../chat/streamAbort.js";
 import type * as chat_streaming from "../chat/streaming.js";
+import type * as chat_streamingReasoning from "../chat/streamingReasoning.js";
+import type * as chat_threadManagement from "../chat/threadManagement.js";
+import type * as chat_weather from "../chat/weather.js";
 import type * as myFunctions from "../myFunctions.js";
 import type * as threads from "../threads.js";
+import type * as tools_updateThreadTitle from "../tools/updateThreadTitle.js";
+import type * as tools_weather from "../tools/weather.js";
 import type * as utils from "../utils.js";
 
 import type {
@@ -36,13 +46,23 @@ import type {
 declare const fullApi: ApiFromModules<{
   agent: typeof agent;
   "agents/config": typeof agents_config;
+  "agents/humanLoop": typeof agents_humanLoop;
   "agents/simple": typeof agents_simple;
   "agents/story": typeof agents_story;
+  "agents/threadManager": typeof agents_threadManager;
+  "agents/weather": typeof agents_weather;
   "chat/basic": typeof chat_basic;
+  "chat/human": typeof chat_human;
+  "chat/humanLoop": typeof chat_humanLoop;
   "chat/streamAbort": typeof chat_streamAbort;
   "chat/streaming": typeof chat_streaming;
+  "chat/streamingReasoning": typeof chat_streamingReasoning;
+  "chat/threadManagement": typeof chat_threadManagement;
+  "chat/weather": typeof chat_weather;
   myFunctions: typeof myFunctions;
   threads: typeof threads;
+  "tools/updateThreadTitle": typeof tools_updateThreadTitle;
+  "tools/weather": typeof tools_weather;
   utils: typeof utils;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
