@@ -71,8 +71,14 @@ export const handleConfirmation = mutation({
       threadId,
       message: {
         role: "tool",
-        content: toolResult,
-        tool_call_id: toolCallId,
+        content: [
+          {
+            type: "tool-result",
+            output: { type: "text", value: toolResult },
+            toolCallId: toolCallId,
+            toolName: "confirmExit",
+          },
+        ],
       }
     });
     

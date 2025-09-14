@@ -24,6 +24,7 @@ A comprehensive demo project showcasing **Convex AI Agents** with Next.js, featu
 3. **🤔 Human-in-Loop** (`/chat-ask-human-demo`) - Human confirmation workflow
 4. **🌤️ Weather Agent** (`/chat-weather-demo`) - Real-time weather data with tool calls
 5. **📝 Thread Manager** (`/chat-thread-management-demo`) - AI manages thread titles
+6. **🎭 System Prompts Demo** (`/chat-system-prompts-demo`) - Dynamic system prompt switching & role comparison
 
 ## 🛠️ Development Environment
 
@@ -75,6 +76,13 @@ await humanLoopAgent.saveMessage(ctx, {
 - **上下文感知**: AI根据对话内容智能建议标题
 - **实时更新**: 通过Convex实时同步标题变更
 
+### System Prompts Demo (`/chat-system-prompts-demo`)
+- **动态角色切换**: 使用`system`参数实时覆盖agent的instructions
+- **预设角色模板**: 7种精心设计的AI角色（学者、诗人、商务专家、技术极客、儿童导师、侦探、哲学家）
+- **自定义系统提示词**: 用户可编辑和测试自己的系统提示词
+- **角色对比模式**: 同一问题，多个角色同时回答进行效果对比
+- **实时角色信息**: UI显示当前激活角色和描述
+
 ## 📚 Convex Agent 开发资源
 
 ### 核心研究文档 (`/docs/`)
@@ -97,6 +105,17 @@ const agent = new Agent({
 return await agent.streamText({
   prompt: `上下文: ${context}\n用户查询: ${message}`
 });
+
+// 动态系统提示词覆盖 (System Prompts Demo核心技术)
+const result = await agent.streamText(
+  ctx,
+  { threadId },
+  { 
+    promptMessageId,
+    system: selectedRolePrompt // 🔥 覆盖默认instructions
+  },
+  { saveStreamDeltas: { chunking: "word", throttleMs: 100 } }
+);
 ```
 
 #### 核心发现
@@ -104,6 +123,7 @@ return await agent.streamText({
 2. **工具集成**: 使用`createTool`而非AI SDK `tool`
 3. **消息流**: 工具调用必须有对应的tool response消息
 4. **实时更新**: Convex streaming + 状态同步
+5. **动态系统提示词**: 使用`system`参数可覆盖agent的默认instructions，实现运行时角色切换
 
 ## 🔍 工具调用可视化实现
 
@@ -149,9 +169,11 @@ const statusColor = toolCall.state === "output-available"
 - ✅ **Human-in-Loop** - 人机交互确认流程 (已修复)
 - ✅ **Weather Agent** - 外部API集成 + 工具调用可视化
 - ✅ **Thread Manager** - 上下文感知的标题管理
+- ✅ **System Prompts Demo** - 动态角色切换 + 系统提示词对比展示
 
 ### 技术成果
 - ✅ **Convex Agent架构理解** - 完整的技术文档和实现模式
 - ✅ **工具调用透明化** - 用户可见的AI决策过程
 - ✅ **Human-in-the-Loop修复** - 正确的工具响应流程
 - ✅ **实时交互体验** - Streaming + 状态同步
+- ✅ **动态系统提示词mastery** - 运行时角色切换 + 多角色对比技术

@@ -98,7 +98,7 @@ export default function ChatThreadManagement() {
         <div className="flex items-center gap-3">
           <span className="text-purple-600 text-lg">💡</span>
           <div className="text-sm text-purple-800">
-            <strong>Ask me to manage thread titles!</strong> Try: "Change this thread title to 'My Project Discussion'", "Suggest a better title for this conversation", or "Update the title"
+            <strong>Ask me to manage thread titles!</strong> Try: &ldquo;Change this thread title to &lsquo;My Project Discussion&rsquo;&rdquo;, &ldquo;Suggest a better title for this conversation&rdquo;, or &ldquo;Update the title&rdquo;
           </div>
         </div>
       </div>

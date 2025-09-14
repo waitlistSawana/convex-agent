@@ -218,8 +218,8 @@ function Story({ threadId, reset }: { threadId: string; reset: () => void }) {
             <div className="text-sm text-blue-700">
               <div className="font-semibold mb-1">结束对话提示</div>
               <ul className="space-y-1 text-xs">
-                <li>• 说包含"按钮"的结束语 → 按钮确认模式</li>
-                <li>• 说包含"对话"的结束语 → 对话确认模式</li>
+                <li>• 说包含&ldquo;按钮&rdquo;的结束语 → 按钮确认模式</li>
+                <li>• 说包含&ldquo;对话&rdquo;的结束语 → 对话确认模式</li>
                 <li>• 其他结束语 → 随机选择模式</li>
               </ul>
             </div>
@@ -362,9 +362,9 @@ function Message({
   );
 }
 
-function ToolCallDisplay({ toolCall }: { toolCall: any }) {
+function ToolCallDisplay({ toolCall }: { toolCall: Record<string, unknown> }) {
   // Extract tool name from type or toolName property
-  const toolName = toolCall.type?.replace("tool-", "") || toolCall.toolName || "unknown";
+  const toolName = toolCall.type?.toString().replace("tool-", "") || toolCall.toolName?.toString() || "unknown";
 
   const getToolIcon = (toolName: string) => {
     switch (toolName) {
@@ -375,7 +375,7 @@ function ToolCallDisplay({ toolCall }: { toolCall: any }) {
     }
   };
 
-  const getToolDescription = (toolName: string, input: any, args: any) => {
+  const getToolDescription = (toolName: string, input: Record<string, unknown> | undefined, args: Record<string, unknown> | undefined) => {
     // Support both input and args properties
     const params = input || args;
     switch (toolName) {

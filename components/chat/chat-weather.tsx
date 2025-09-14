@@ -98,9 +98,9 @@ export default function ChatWeather() {
         <div className="flex items-center gap-3">
           <span className="text-blue-600 text-lg">💡</span>
           <div className="text-sm text-blue-800">
-            <strong>Ask me about the weather!</strong> Try: "What's the weather
-            in Beijing?", "Tell me about New York weather", or "How's the
-            weather in Tokyo today?"
+            <strong>Ask me about the weather!</strong> Try: &ldquo;What&rsquo;s the weather
+            in Beijing?&rdquo;, &ldquo;Tell me about New York weather&rdquo;, or &ldquo;How&rsquo;s the
+            weather in Tokyo today?&rdquo;
           </div>
         </div>
       </div>
@@ -174,11 +174,11 @@ export default function ChatWeather() {
                     location worldwide
                   </div>
                   <div>
-                    🌍 Just ask about any city, and I'll fetch current weather
+                    🌍 Just ask about any city, and I&rsquo;ll fetch current weather
                     data
                   </div>
                   <div>
-                    📺 I'll present it like a professional weather reporter
+                    📺 I&rsquo;ll present it like a professional weather reporter
                   </div>
                 </div>
               </div>
@@ -377,9 +377,9 @@ function WeatherMessage({ message }: { message: UIMessage }) {
   );
 }
 
-function ToolCallDisplay({ toolCall }: { toolCall: any }) {
+function ToolCallDisplay({ toolCall }: { toolCall: Record<string, unknown> }) {
   // Extract tool name from type (e.g., "tool-getWeather" -> "getWeather")
-  const toolName = toolCall.type?.replace("tool-", "") || "unknown";
+  const toolName = toolCall.type?.toString().replace("tool-", "") || "unknown";
 
   const getToolIcon = (toolName: string) => {
     switch (toolName) {
@@ -392,7 +392,7 @@ function ToolCallDisplay({ toolCall }: { toolCall: any }) {
     }
   };
 
-  const getToolDescription = (toolName: string, input: any, output: any) => {
+  const getToolDescription = (toolName: string, input: Record<string, unknown> | undefined) => {
     switch (toolName) {
       case "getWeather":
         const coords =
@@ -401,13 +401,13 @@ function ToolCallDisplay({ toolCall }: { toolCall: any }) {
             : "";
         return `Fetched weather data${coords}`;
       case "geocode":
-        return `Looking up location: ${input?.location || input?.city || "Unknown"}`;
+        return `Looking up location: ${(input?.location as string) || (input?.city as string) || "Unknown"}`;
       default:
         return `Called ${toolName}`;
     }
   };
 
-  const hasOutput = toolCall.output && Object.keys(toolCall.output).length > 0;
+  const hasOutput = toolCall.output && typeof toolCall.output === 'object' && Object.keys(toolCall.output).length > 0;
 
   return (
     <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
@@ -426,7 +426,7 @@ function ToolCallDisplay({ toolCall }: { toolCall: any }) {
       </div>
 
       <div className="text-xs text-blue-600 mb-1">
-        {getToolDescription(toolName, toolCall.input, toolCall.output)}
+        {getToolDescription(toolName, toolCall.input as Record<string, unknown> | undefined)}
       </div>
 
       {hasOutput && (

@@ -56,6 +56,9 @@ function Content() {
           <Link href={"/chat-thread-management-demo"}>
             <Button className="bg-purple-600 hover:bg-purple-700">📝 Thread Management Demo</Button>
           </Link>
+          <Link href={"/chat-system-prompts-demo"}>
+            <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">🎭 System Prompts Demo</Button>
+          </Link>
         </div>
       </div>
       <p>
