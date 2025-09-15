@@ -65,6 +65,7 @@ This project showcases multiple Convex AI Agent implementations:
 4. **🌤️ Weather Agent** (`/chat-weather-demo`) - External API integration with tool call visualization
 5. **📝 Thread Manager** (`/chat-thread-management-demo`) - Context-aware thread title management
 6. **🎭 System Prompts Demo** (`/chat-system-prompts-demo`) - Dynamic system prompt switching & role comparison
+7. **👥 Multi-User Demo** (`/chat-multi-user-demo`) - User isolation and multi-user thread management
 
 ## Completed Features ✅
 
@@ -73,6 +74,7 @@ This project showcases multiple Convex AI Agent implementations:
 - ✅ **多角色对比** - Real-time role comparison and switching
 - ✅ **工具调用可视化** - Complete tool execution process transparency
 - ✅ **流式响应** - Real-time streaming chat experience
+- ✅ **多用户隔离** - Complete data isolation between different users
 
 ## Technical Achievements
 
@@ -81,6 +83,7 @@ This project showcases multiple Convex AI Agent implementations:
 - **Human-in-the-Loop Workflow**: Proper tool response flow with user confirmation
 - **External Tool Integration**: Weather API with geocoding and real-time data fetching
 - **Real-time UI Updates**: Convex streaming with optimistic updates
+- **Multi-User Data Isolation**: Thread-level user authorization with complete data separation
 
 ## 📁 Detailed Implementation Analysis
 
@@ -289,6 +292,85 @@ const result = await systemPromptsAgent.streamText(
     promptMessageId,
     system: selectedRolePrompt // 🔥 Runtime override
   }
+);
+```
+
+#### 7. **Multi-User Demo** (`/chat-multi-user-demo`)
+```
+app/chat-multi-user-demo/page.tsx
+components/chat/chat-multi-user.tsx        # Multi-user UI with user selector
+convex/chat/multiUser.ts                   # Multi-user backend with isolation
+convex/agents/multiUser.ts                 # Multi-user agent configuration
+```
+
+**Key Implementation:**
+- Complete user data isolation with thread-level authorization
+- User switching with localStorage persistence  
+- Individual user themes and visual distinction
+- Real-time user selection and state management
+- Secure thread access control
+
+**Authorization Architecture:**
+```typescript
+// User authorization for thread access
+export async function authorizeMultiUserThreadAccess(
+  ctx: QueryCtx | ActionCtx,
+  threadId: string,
+  userId?: string,
+) {
+  const currentUserId = await getCurrentUserId(ctx, userId);
+  
+  // Get thread owner from metadata
+  const { userId: threadUserId } = await getThreadMetadata(
+    ctx, components.agent, { threadId }
+  );
+  
+  // 🔒 Enforce data isolation
+  if (threadUserId && threadUserId !== currentUserId) {
+    throw new Error(`Unauthorized access`);
+  }
+}
+
+// User-specific thread creation
+export const createUserThread = mutation({
+  handler: async (ctx, { title, userId }) => {
+    const currentUserId = await getCurrentUserId(ctx, userId);
+    
+    // Bind thread to user at creation
+    const threadId = await createThread(ctx, components.agent, {
+      userId: currentUserId,  // 🏷️ Thread ownership
+      title: title || `${currentUserId}'s Chat`,
+    });
+    
+    return threadId;
+  },
+});
+```
+
+**User Management Pattern:**
+```typescript
+// Virtual users for demonstration
+const DEMO_USERS = [
+  { id: "alice", name: "Alice 👩‍💻", theme: "blue", description: "前端开发工程师" },
+  { id: "bob", name: "Bob 👨‍🎨", theme: "green", description: "UI/UX设计师" }, 
+  // ... more users
+] as const;
+
+// User switching with state reset
+const switchUser = useCallback((newUser: DemoUser) => {
+  setCurrentUser(newUser);
+  setCurrentUserInStorage(newUser.id);
+  
+  // 🧹 Clear current thread to force reload
+  window.location.hash = "";
+  setThreadId(undefined);
+}, []);
+
+// User-specific queries
+const threads = usePaginatedQuery(
+  api.chat.multiUser.listUserThreads,
+  { userId: currentUser.id },  // 🎯 User-specific data
+  { initialNumItems: 20 }
 );
 ```
 

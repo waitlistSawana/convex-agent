@@ -8,13 +8,15 @@ A comprehensive demo project showcasing **Convex AI Agents** with Next.js, featu
 - **Real-time Streaming Chat** - Convex-powered real-time AI conversations
 - **Human-in-the-Loop** - AI requests human confirmation for specific actions
 - **External Tool Integration** - Weather API and thread management tools
-- **Multiple Agent Types** - Basic chat, streaming, confirmation, and specialized agents
+- **Multi-User Data Isolation** - Complete user separation with theme-based UI
+- **Dynamic System Prompts** - Runtime role switching and comparison
+- **Tool Call Visualization** - Transparent AI decision-making process
 
 ### Tech Stack
 - **Frontend**: Next.js 15 + React 18 + TypeScript
 - **Backend**: Convex (real-time database + agent functions)
 - **AI**: Convex Agent framework with streaming capabilities
-- **Tools**: Weather API, Thread management, Human confirmation
+- **Tools**: Weather API, Thread management, Human confirmation, User authorization
 
 ## 🚀 Demo Applications
 
@@ -25,6 +27,7 @@ A comprehensive demo project showcasing **Convex AI Agents** with Next.js, featu
 4. **🌤️ Weather Agent** (`/chat-weather-demo`) - Real-time weather data with tool calls
 5. **📝 Thread Manager** (`/chat-thread-management-demo`) - AI manages thread titles
 6. **🎭 System Prompts Demo** (`/chat-system-prompts-demo`) - Dynamic system prompt switching & role comparison
+7. **👥 Multi-User Demo** (`/chat-multi-user-demo`) - Complete user isolation with theme-based UI
 
 ## 🛠️ Development Environment
 
@@ -83,6 +86,59 @@ await humanLoopAgent.saveMessage(ctx, {
 - **角色对比模式**: 同一问题，多个角色同时回答进行效果对比
 - **实时角色信息**: UI显示当前激活角色和描述
 
+### Multi-User Demo (`/chat-multi-user-demo`)
+- **完全数据隔离**: 基于线程级用户授权的数据安全隔离
+- **用户切换机制**: localStorage持久化 + 状态重置的无缝切换体验
+- **主题化UI**: 每个用户独特的颜色方案和视觉标识
+- **权限控制**: 在每个API调用层面验证用户访问权限
+- **历史记录隔离**: 用户只能查看和管理自己的对话线程
+
+#### 核心隔离机制
+```typescript
+// 线程访问权限验证
+export async function authorizeMultiUserThreadAccess(
+  ctx: QueryCtx | ActionCtx,
+  threadId: string,
+  userId?: string,
+) {
+  const currentUserId = await getCurrentUserId(ctx, userId);
+  const { userId: threadUserId } = await getThreadMetadata(
+    ctx, components.agent, { threadId }
+  );
+  
+  // 🔒 强制数据隔离
+  if (threadUserId && threadUserId !== currentUserId) {
+    throw new Error(`Unauthorized access`);
+  }
+}
+
+// 用户特定的线程创建
+const threadId = await createThread(ctx, components.agent, {
+  userId: currentUserId,  // 🏷️ 线程所有权绑定
+  title: `${currentUserId}'s Chat`,
+});
+```
+
+#### 前端用户管理
+```typescript
+// 用户切换逻辑
+const switchUser = useCallback((newUser: DemoUser) => {
+  setCurrentUser(newUser);
+  setCurrentUserInStorage(newUser.id);
+  
+  // 🧹 清空状态强制重新加载用户数据
+  window.location.hash = "";
+  setThreadId(undefined);
+}, []);
+
+// 用户专属查询
+const threads = usePaginatedQuery(
+  api.chat.multiUser.listUserThreads,
+  { userId: currentUser.id },  // 仅查询当前用户数据
+  { initialNumItems: 20 }
+);
+```
+
 ## 📚 Convex Agent 开发资源
 
 ### 核心研究文档 (`/docs/`)
@@ -124,6 +180,7 @@ const result = await agent.streamText(
 3. **消息流**: 工具调用必须有对应的tool response消息
 4. **实时更新**: Convex streaming + 状态同步
 5. **动态系统提示词**: 使用`system`参数可覆盖agent的默认instructions，实现运行时角色切换
+6. **多用户数据隔离**: 通过线程元数据中的userId实现用户级权限控制和数据隔离
 
 ## 🔍 工具调用可视化实现
 
@@ -170,6 +227,7 @@ const statusColor = toolCall.state === "output-available"
 - ✅ **Weather Agent** - 外部API集成 + 工具调用可视化
 - ✅ **Thread Manager** - 上下文感知的标题管理
 - ✅ **System Prompts Demo** - 动态角色切换 + 系统提示词对比展示
+- ✅ **Multi-User Demo** - 完全数据隔离 + 用户主题切换
 
 ### 技术成果
 - ✅ **Convex Agent架构理解** - 完整的技术文档和实现模式
@@ -177,3 +235,69 @@ const statusColor = toolCall.state === "output-available"
 - ✅ **Human-in-the-Loop修复** - 正确的工具响应流程
 - ✅ **实时交互体验** - Streaming + 状态同步
 - ✅ **动态系统提示词mastery** - 运行时角色切换 + 多角色对比技术
+- ✅ **多用户数据隔离架构** - 线程级权限控制 + 用户状态管理 + 主题化UI系统
+
+## 🔄 新Demo开发标准工作流程 (SOP)
+
+### Phase 1: 需求分析与架构设计
+1. **阅读项目文档** - 首先完整阅读CLAUDE.md了解项目背景、现有技术成果和开发规范
+2. **理解需求** - 明确demo要展示的核心功能和技术点
+3. **分析现有实现** - 读取相关现有demo代码，理解架构模式
+4. **设计验证** - 与用户讨论架构方案，确保符合项目标准
+   - ✅ 保持简洁 (3-4个文件)
+   - ✅ 完全独立 (可复制粘贴)
+   - ✅ 遵循现有模式
+
+### Phase 2: 技术实现 (固定顺序)
+1. **后端Agent配置** (`convex/agents/newDemo.ts`)
+   - 定义agent personality和instructions
+   - 配置必要的工具和参数
+   
+2. **后端API函数** (`convex/chat/newDemo.ts`)
+   - 实现mutation和query函数
+   - 添加必要的业务逻辑和权限控制
+   
+3. **前端组件** (`components/chat/chat-new-demo.tsx`)
+   - 实现完整的UI逻辑和状态管理
+   - 集成streaming和optimistic updates
+   
+4. **页面路由** (`app/new-demo/page.tsx`)
+   - 简单的组件包装器
+   
+5. **主页集成** (`app/page.tsx`)
+   - 添加demo入口链接
+
+### Phase 3: 文档化与集成
+1. **README.md 更新**
+   - Available Demos列表
+   - Completed Features  
+   - Technical Achievements
+   - 详细实现分析 (含代码示例)
+   
+2. **CLAUDE.md 更新**
+   - 核心技术实现说明
+   - 已实现Demo状态
+   - 技术成果记录
+
+### 🔑 关键原则
+- **先分析，后实现** - 必须先理解现有代码结构
+- **保持一致性** - 遵循现有的命名和架构模式  
+- **完全独立** - 每个demo都应该可以独立复制到其他项目
+- **文档同步** - 代码完成后立即更新文档
+
+### 💡 技术要点
+- 使用Convex Agent的内置功能而非自定义实现
+- 每个API调用都考虑权限和安全
+- 前端状态管理要简洁明了
+- UI要有清晰的视觉区分和用户反馈
+
+### 📋 实施检查清单
+- [ ] 完整阅读CLAUDE.md项目文档
+- [ ] 需求明确，架构设计经过验证
+- [ ] 按固定顺序实现所有文件
+- [ ] 代码遵循现有项目模式
+- [ ] 完成README.md和CLAUDE.md文档更新
+- [ ] 测试demo功能正常
+- [ ] 确保代码可独立复制到其他项目
+
+**成功标准**: 新demo与现有demo在代码质量、文档完整性和用户体验上保持一致，同时展示独特的技术创新点。

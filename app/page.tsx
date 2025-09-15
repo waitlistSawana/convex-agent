@@ -60,6 +60,11 @@ function Content() {
             <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">🎭 System Prompts Demo</Button>
           </Link>
         </div>
+        <div className="flex gap-4">
+          <Link href={"/chat-multi-user-demo"}>
+            <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white">👥 Multi-User Demo</Button>
+          </Link>
+        </div>
       </div>
       <p>
         Click the button below and open this page in another window - this data
